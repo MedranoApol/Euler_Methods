@@ -8,44 +8,46 @@ class EulerMethods:
     def __init__(self, master):
         self.master = master
         master.title("Euler's Method Solver")
-
+        
+        tk.Label(master, text="Euler's Method Solver").grid(row=0, column=0, stick="ew")
+        tk.Label(master, text="").grid(row=1, column=0)
         # Labels and input fields
-        tk.Label(master, text="Enter u'(t):").grid(row=0, column=0)
+        tk.Label(master, text="Enter u'(t):").grid(row=2, column=0)
         self.du_entry = tk.Entry(master)
-        self.du_entry.grid(row=0, column=1)
+        self.du_entry.grid(row=2, column=1)
 
-        tk.Label(master, text="Initial t (t0):").grid(row=1, column=0)
+        tk.Label(master, text="Initial t (t0):").grid(row=3, column=0)
         self.t0_entry = tk.Entry(master)
-        self.t0_entry.grid(row=1, column=1)
+        self.t0_entry.grid(row=3, column=1)
 
-        tk.Label(master, text="Initial u (u0):").grid(row=2, column=0)
+        tk.Label(master, text="Initial u (u0):").grid(row=4, column=0)
         self.u0_entry = tk.Entry(master)
-        self.u0_entry.grid(row=2, column=1)
+        self.u0_entry.grid(row=4, column=1)
 
-        tk.Label(master, text="Step Size (h):").grid(row=3, column=0)
+        tk.Label(master, text="Step Size (h):").grid(row=5, column=0)
         self.h_entry = tk.Entry(master)
-        self.h_entry.grid(row=3, column=1)
+        self.h_entry.grid(row=5, column=1)
 
-        tk.Label(master, text="Number of Steps (n):").grid(row=4, column=0)
+        tk.Label(master, text="Number of Steps (n):").grid(row=6, column=0)
         self.n_entry = tk.Entry(master)
-        self.n_entry.grid(row=4, column=1)
+        self.n_entry.grid(row=6, column=1)
 
         # Buttons
-        tk.Button(master, text="Graph of Standard Euler's Method", command=lambda: self.run_euler_method(standard_eulers_method)).grid(row=5, column=0)
-        tk.Button(master, text="Graph of Modified Euler's Method", command=lambda: self.run_euler_method(improved_eulers_method)).grid(row=5, column=1)
-        tk.Button(master, text="Compare Graph of Methods", command=self.compare_methods).grid(row=6, column=0, columnspan=2)
+        tk.Button(master, text="Graph of Standard Euler's Method", command=lambda: self.run_euler_method(standard_eulers_method)).grid(row=7, column=0)
+        tk.Button(master, text="Graph of Modified Euler's Method", command=lambda: self.run_euler_method(improved_eulers_method)).grid(row=7, column=1)
+        tk.Button(master, text="Compare Graph of Methods", command=self.compare_methods).grid(row=8, column=0, columnspan=2)
 
         # Buttons for showing computation steps
-        tk.Button(master, text="Show Standard Euler Steps", command=lambda: self.show_steps(standard_eulers_method)).grid(row=7, column=0)
-        tk.Button(master, text="Show Modified Euler Steps", command=lambda: self.show_steps(improved_eulers_method)).grid(row=7, column=1)
+        tk.Button(master, text="Show Standard Euler Steps", command=lambda: self.show_steps(standard_eulers_method)).grid(row=9, column=0)
+        tk.Button(master, text="Show Modified Euler Steps", command=lambda: self.show_steps(improved_eulers_method)).grid(row=9, column=1)
 
         # Frame for the plot
         self.plot_frame = tk.Frame(master)
-        self.plot_frame.grid(row=8, column=0, columnspan=2)
+        self.plot_frame.grid(row=10, column=0, columnspan=2)
 
         # Frame for the steps
         self.steps_frame = tk.Frame(master)
-        self.steps_frame.grid(row=8, column=0, columnspan=2) 
+        self.steps_frame.grid(row=10, column=0, columnspan=2) 
 
         # Dictionary to store export buttons for graphs and steps
         self.export_buttons = None
@@ -64,7 +66,7 @@ class EulerMethods:
         # If steps_frame has been destroyed, recreate it
         if not self.steps_frame.winfo_exists():
             self.steps_frame = tk.Frame(self.master)
-            self.steps_frame.grid(row=8, column=0, columnspan=2)
+            self.steps_frame.grid(row=10, column=0, columnspan=2)
 
         # Clear any existing steps
         for widget in self.steps_frame.winfo_children():
@@ -104,18 +106,28 @@ class EulerMethods:
             # If steps_frame has been destroyed, recreate it
             if not self.steps_frame.winfo_exists():
                 self.steps_frame = tk.Frame(self.master)
-                self.steps_frame.grid(row=8, column=0, columnspan=2)
+                self.steps_frame.grid(row=10, column=0, columnspan=2)
 
              # If steps_frame exists, destroy it first
             for widget in self.steps_frame.winfo_children():
-                widget.destroy()  # Remove existing widgets, if any 
+                widget.destroy()  # Remove existing widgets, if any
 
+            intro1 = f"\n\nSuppose u'(t) = {du}, u({t0}) = {u0}, and h = {h}."
+            intro2 = "We will now preform Euler's Method to approximate u(t)."
+            intro3 = "Therefore:"
+
+            tk.Label(self.steps_frame, text= intro1).grid(row=0, column=0, sticky="w")
+            tk.Label(self.steps_frame, text= intro2).grid(row=1, column=0, sticky="w")
+            tk.Label(self.steps_frame, text="").grid(row=2, column=0, sticky="w") 
+            tk.Label(self.steps_frame, text= intro3).grid(row=3, column=0, sticky="w")
             # Display the steps below the input fields
             for idx, step in enumerate(steps):
-                tk.Label(self.steps_frame, text=f"Step {idx}: t{idx} = {step[0]}, u{idx} = {step[1]}").grid(row=idx, column=0)
-
+                tk.Label(self.steps_frame, text=f"Step {idx}:\t t{idx} = {step[0] : 5f},\t u{idx} = {step[1]: 5f}").grid(row=idx+4, column=0, sticky="w")
+            tk.Label(self.steps_frame, text="" ).grid(row=len(steps) + 4, column=0, sticky="w")
+            tk.Label(self.steps_frame, text=f"Hence, u({steps[-1][0]}) ≈ {steps[-1][1]}" ).grid(row=len(steps) + 5, column=0, sticky="w")
+            tk.Label(self.steps_frame, text="" ).grid(row=len(steps) + 6, column=0, sticky="w")
             self.export_buttons = tk.Button(self.steps_frame, text="Export Steps", command=lambda: self.export_steps(str(method.__name__), steps))
-            self.export_buttons.grid(row=len(steps), column=0)
+            self.export_buttons.grid(row=len(steps) + 7, column=0)
  
         except Exception as e:
             messagebox.showerror("Error", f"Invalid input: {e}")
@@ -130,7 +142,7 @@ class EulerMethods:
         # If steps_frame has been destroyed, recreate it
         if not self.steps_frame.winfo_exists():
             self.steps_frame = tk.Frame(self.master)
-            self.steps_frame.grid(row=8, column=0, columnspan=2)
+            self.steps_frame.grid(row=10, column=0, columnspan=2)
 
         try:
             du = self.du_entry.get()
@@ -263,7 +275,7 @@ class EulerMethods:
         filename = f"{method}_steps.txt"
         with open(filename, 'w') as f:
             for idx, step in enumerate(steps):
-                f.write(f"Step {idx}: t{idx} = {step[0]}, u{idx} = {step[1]}\n")
+                f.write(f"\tStep {idx}: \tt{idx} = {step[0]}, \tu{idx} = {step[1]}\n")
         
         messagebox.showinfo("Export Successful", f"Steps saved as {filename}")
 
